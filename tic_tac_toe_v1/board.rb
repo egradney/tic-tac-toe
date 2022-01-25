@@ -1,24 +1,28 @@
 require "byebug"
-# require_relative
+require_relative "game"
 
 
 class Board
 
     attr_reader :grid
 
-    def initialize(length)
+    def initialize(n)
 
-    @grid = Array.new(length) { Array.new(length, "'_'") }
-    @length = length
-    @size = length * length
+    @grid = Array.new(n) { Array.new(n, "'_'") }
+    @length = n-1
+    @size = n * n
 
     end
 
-    def valid?(position)
-        
-        pos = position.split(' ').map { |ele| ele.to_i}
+    def valid?(pos)
+      
         row, col = pos
-        if row > @length ||  col > @length
+        p row
+        p col
+
+        if col > @length || row > @length
+            self.print
+            print "Try again. Please enter a valid position \n"
             return false
         end
 
@@ -26,47 +30,78 @@ class Board
 
     end
 
-    def empty?(position)
-        pos = position.split(' ').map { |ele| ele.to_i}
-    
+    def empty?(pos)
         row, col = pos
-    
-        if row > @length || col > @length
-            return false
+
+        if @grid[row][col] == "'_'"
+            return true
         end
-        @grid[row][col] == "'_'"
+
+        false
 
     end
 
-    def place_mark(position, mark)
+    def place_mark(pos, mark)
 
-        if !self.valid?(position) or !self.empty?(position)
-            raise error
+        if !self.valid?(pos) || !self.empty?(pos)
+            return false
         else
-            pos = position.split(' ').map { |ele| ele.to_i}
             row, col = pos
+
             @grid[row][col] = mark
             return true
         end
 
+    end
+
+    def print
+    
+        @grid.each_with_index { |row, i| puts "\n#{i} #{row.join(' ')}\n" }
+  
+    end
+
+    def win_row?(mark)
+
+        @grid.any? { |row| row.all? { |ele| ele == mark } }
 
     end
 
 
-    # def win?
+    def win_col?(mark)
 
-    # end
+        @grid.transpose.any? { |col| col.all? { |ele| ele == mark } }
 
-    # def game_over?
+    end
+
+    def win_diagonal?(mark)
+
+        @grid.all? { |row| row[@grid.index(row)] == mark} ||
+        @grid.all? { |row| row[ ((@grid.index(row)-(row.length-1))) * -1] == mark}
 
 
+    end
+
+    def win?(mark)
+
+        self.win_row?(mark) || 
+        self.win_col?(mark) || 
+        self.win_diagonal?(mark)
+
+    end
+
+
+    def empty_positions?
+
+        @grid.each do |row|
+            row.each do |ele|
+                if ele == "'_'"
+                    return true
+                end
+            end
+        end
+
+        false
+
+    end
 
 end
-
-brd = Board.new(5)
-p brd.valid?('0 6')  #=> false
-p brd.valid?('8 8') #=> false
-p brd.valid?('2 2')  #=> true
-p brd.empty?('3 3') #=> true
-p brd.place_mark('3 3', :X) #=> true
-p brd.empty?('3 3')          #=> false                 
