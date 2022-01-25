@@ -9,24 +9,23 @@ class Board
     def initialize(n)
 
     @grid = Array.new(n) { Array.new(n, "'_'") }
-    @length = n-1
+    @length = n
     @size = n * n
 
     end
 
     def valid?(pos)
-      
-        row, col = pos
-        p row
-        p col
 
-        if col > @length || row > @length
-            self.print
-            print "Try again. Please enter a valid position \n"
-            return false
+        row, col = pos
+
+        if col < @length && row < @length
+            return true
         end
 
-        true
+        false
+
+        rescue
+            return false
 
     end
 
@@ -39,23 +38,31 @@ class Board
 
         false
 
+        rescue
+            return false
+
     end
 
     def place_mark(pos, mark)
 
-        if !self.valid?(pos) || !self.empty?(pos)
-            return false
-        else
-            row, col = pos
+        if self.valid?(pos)
+            if self.empty?(pos)
+                row, col = pos
+                @grid[row][col] = mark
+                return true
+            end
 
-            @grid[row][col] = mark
-            return true
         end
+
+        false
+
+        rescue
+            return false
 
     end
 
     def print
-    
+        
         @grid.each_with_index { |row, i| puts "\n#{i} #{row.join(' ')}\n" }
   
     end

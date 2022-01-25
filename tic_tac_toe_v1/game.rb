@@ -28,14 +28,12 @@ class Game
     end
 
     def play
-
-        puts 'Welcome to Tic-Tac-Toe!'
   
         while @board.empty_positions?
 
             @board.print
 
-            if @board.place_mark(@current_player.get_position, @current_player.mark)
+            if @board.place_mark(@current_player.get_position(@current_player.mark), @current_player.mark)
                 if @board.win?(@current_player.mark)
                     @board.print
                     print  "Victory! ", @current_player.mark, " wins! \n"
@@ -44,7 +42,8 @@ class Game
                 end
                     self.switch_turn
             else
-                @current_player.get_position
+                print "Try again. Please enter a valid position \n"
+                self.play
             end
 
        
@@ -56,9 +55,9 @@ class Game
         @current_player = @player1
         self.play
 
-        rescue NoMethodError
-            print "Try again. Please enter a valid position \n"
-            @current_player.get_position
+        # rescue
+        #     print "Try again. Please enter a valid position \n"
+        #     @current_player.get_position
 
     end
 
